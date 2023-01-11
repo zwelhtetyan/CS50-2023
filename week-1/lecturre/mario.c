@@ -1,3 +1,4 @@
+#include <cs50.h>
 #include <stdio.h>
 
 int get_size(void);
@@ -15,8 +16,7 @@ int get_size(void) {
   int size;
 
   do {
-    printf("Size: ");
-    scanf("%d", &size);
+    size = get_int("Size: ");
   } while (size < 1);
 
   return size;
