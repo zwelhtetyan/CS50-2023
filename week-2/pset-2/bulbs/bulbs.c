@@ -40,12 +40,14 @@ void showBulbs(int number)
 
     int i;
 
-    for (i = 0; i < 8; i++) {
+    for (i = 0; i < 8; i++)
+    {
         binary[i] = num % 2;
         num /= 2;
     }
 
-    for (i = 7; i >= 0; i--) {
+    for (i = 7; i >= 0; i--)
+    {
         print_bulb(binary[i]);
     }
 
