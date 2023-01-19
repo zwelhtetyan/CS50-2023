@@ -5,14 +5,14 @@
 
 int main(int argc, string argv[])
 {
-  string key = argv[1];
-  int key_length = strlen(key);
-
   if (argc != 2)
   {
     printf("Usage: ./substitution key\n");
     return 1;
   }
+
+  string key = argv[1];
+  int key_length = strlen(key);
 
   if (key_length != 26)
   {
@@ -22,7 +22,7 @@ int main(int argc, string argv[])
 
   for (int i = 0; i < key_length; i++)
   {
-    if (isdigit(key[i]))
+    if (isdigit(key[i]) || !isalpha(key[i]))
     {
       printf("Key must only contain alphabetic characters.\n");
       return 1;
@@ -30,7 +30,7 @@ int main(int argc, string argv[])
     else {
       for (int j = 0; j < key_length; j++)
       {
-        if (tolower(key[j]) == tolower(key[i]))
+        if (i != j && tolower(key[j]) == tolower(key[i]))
         {
           printf("Key must not contain repeated characters.\n");
           return 1;
