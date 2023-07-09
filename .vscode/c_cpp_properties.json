@@ -3,7 +3,8 @@
         {
             "name": "Mac",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/libcs50-11.0.2/build/include"
             ],
             "defines": [],
             "macFrameworkPath": [
