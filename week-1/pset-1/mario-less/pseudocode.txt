@@ -1,0 +1,3 @@
+1. Firstly prompt the user to get the size of bricks
+2. If the height of the bricks is less than 1 or greater than 8, re-prompt
+3. Loop the bricks and put the (#) by order
