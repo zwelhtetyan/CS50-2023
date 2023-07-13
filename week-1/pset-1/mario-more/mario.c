@@ -1,53 +1,49 @@
 #include <cs50.h>
 #include <stdio.h>
 
-int get_height(void);
-void make_brick(int height);
+int get_mario_size();
+void generate_bricks(int size);
 
 int main(void)
 {
-    // get height from user
-    int height = get_height();
+  int size = get_mario_size();
 
-    // generate bricks
-    make_brick(height);
+  generate_bricks(size);
 }
 
-int get_height(void)
+int get_mario_size()
 {
-    int height;
+  int size;
 
-    do
-    {
-        height = get_int("Height: ");
-    }
-    while (height < 1 || height > 8);
+  do
+  {
+    size = get_int("Height: ");
+  } while (size < 1 || size > 8);
 
-    return height;
+  return size;
 }
 
-void make_brick(int height)
+void generate_bricks(int size)
 {
-    for (int i = 1; i <= height; i++)
+  for (int i = 1; i <= size; i++)
+  {
+    for (int j = 1; j <= size - i; j++)
     {
-
-        for (int z = 0; z < height - i; z++)
-        {
-            printf(" ");
-        }
-
-        for (int j = 0; j < i; j++)
-        {
-            printf("#");
-        }
-
-        printf("  ");
-
-        for (int x = 1; x <= i; x++)
-        {
-            printf("#");
-        }
-
-        printf("\n");
+      printf(" ");
     }
+
+    for (int z = 0; z < i; z++)
+    {
+      printf("#");
+    }
+
+    printf("  ");
+
+    for (int x = 0; x < i; x++)
+    {
+      printf("#");
+    }
+
+    printf("\n");
+  }
 }
