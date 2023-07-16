@@ -21,7 +21,8 @@ int main(void)
     printf("%i %i\n", score1, score2);
 
     // TODO: Print the winner
-    string result = score1 > score2 ? "Player 1 wins!" : score1 < score2 ? "Player 2 wins!" : "Tie!";
+    string result = score1 > score2 ? "Player 1 wins!" : score1 < score2 ? "Player 2 wins!"
+                                                                         : "Tie!";
 
     printf("%s\n", result);
 }
@@ -32,8 +33,6 @@ int compute_score(string word)
 
     for (int i = 0, N = strlen(word); i < N; i++)
     {
-
-
         if (tolower(word[i]) >= 'a' && tolower(word[i]) <= 'z')
         {
             const int idx = tolower(word[i]) - 'a';
