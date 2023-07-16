@@ -1,87 +1,91 @@
 #include <cs50.h>
 #include <stdio.h>
-#include <ctype.h>
 #include <string.h>
-#include <math.h>
+#include <ctype.h>
 
-int calc_letters(string text);
-int calc_words(string text);
-int calc_sentences(string text);
+int get_letter(string text);
+int get_word(string text);
+int get_sentence(string text);
+void print_grade(int R);
 
 int main(void)
 {
-  const string text = get_string("Text: ");
+  string text = get_string("Text: ");
 
-  const int letters = calc_letters(text);
-  const int words = calc_words(text);
-  const int sentences = calc_sentences(text);
+  int letters = get_letter(text);
+  int words = get_word(text);
+  int sentences = get_sentence(text);
 
-  float L = ((float)letters / (float)words) * 100;
-  float S = ((float)sentences / (float)words) * 100;
+  float L = (float)letters / (float)words * 100;
+  float S = (float)sentences / (float)words * 100;
+  int R = 0.0588 * L - 0.296 * S - 15.8;
 
-  const float index = 0.0588 * L - 0.296 * S - 15.8;
+  print_grade(R);
+}
 
-  const int Grade = round(index);
+int get_letter(string text)
+{
+  int count = 0;
 
-  // Before Grade 1
-  // Grade 3
-  // Grade 16+
+  for (int i = 0, N = strlen(text); i < N; i++)
+  {
+    char letter = tolower(text[i]);
 
-  if (Grade >= 16)
+    if (letter >= 'a' && letter <= 'z')
+    {
+      count++;
+    }
+  }
+
+  return count;
+}
+
+int get_word(string text)
+{
+  int count = 1;
+
+  for (int i = 0, N = strlen(text); i < N; i++)
+  {
+    char letter = text[i];
+
+    if (letter == ' ')
+    {
+      count++;
+    }
+  }
+
+  return count;
+}
+
+int get_sentence(string text)
+{
+  int count = 0;
+
+  for (int i = 0, N = strlen(text); i < N; i++)
+  {
+    char letter = text[i];
+
+    if (letter == '.' || letter == '!' || letter == '?')
+    {
+      count++;
+    }
+  }
+
+  return count;
+}
+
+void print_grade(int R)
+{
+  if (R >= 16)
   {
     printf("Grade 16+\n");
   }
-  else if (Grade < 1)
+  else if (R < 1)
   {
     printf("Before Grade 1\n");
   }
   else
   {
-    printf("Grade %i\n", Grade);
+    printf("Grade %i\n", R);
   }
-}
-
-int calc_letters(string text)
-{
-  int r = 0;
-
-  for (int i = 0, N = strlen(text);  i < N; i++)
-  {
-    if (tolower(text[i]) >= 'a' && tolower(text[i]) <= 'z')
-    {
-      r++;
-    }
-  }
-
-  return r;
-}
-
-int calc_words(string text)
-{
-  int r = 1;
-
-  for (int i = 0, N = strlen(text);  i < N; i++)
-  {
-    if (text[i] == ' ')
-    {
-      r++;
-    }
-  }
-
-  return r;
-}
-
-int calc_sentences(string text)
-{
-  int r = 0;
-
-  for (int i = 0, N = strlen(text);  i < N; i++)
-  {
-    if (text[i] == '!' || text[i] == '.' || text[i] == '?')
-    {
-      r++;
-    }
-  }
-
-  return r;
 }

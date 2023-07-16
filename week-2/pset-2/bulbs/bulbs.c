@@ -5,16 +5,13 @@
 const int BITS_IN_BYTE = 8;
 
 void print_bulb(int bit);
-void showBulbs(int number);
+void show_bulb(string message);
 
 int main(void)
 {
-    const string text = get_string("Message: ");
+    string message = get_string("Message: ");
 
-    for (int i = 0, N = strlen(text); i < N; i++)
-    {
-        showBulbs(text[i]);
-    }
+    show_bulb(message);
 }
 
 void print_bulb(int bit)
@@ -31,25 +28,26 @@ void print_bulb(int bit)
     }
 }
 
-
-void showBulbs(int number)
+void show_bulb(string message)
 {
-    int num = number;
+    int array[BITS_IN_BYTE];
 
-    int binary[BITS_IN_BYTE];
-
-    int i;
-
-    for (i = 0; i < 8; i++)
+    for (int i = 0, N = strlen(message); i < N; i++)
     {
-        binary[i] = num % 2;
-        num /= 2;
-    }
+        int number = message[i];
 
-    for (i = 7; i >= 0; i--)
-    {
-        print_bulb(binary[i]);
-    }
+        for (int j = 0; j < BITS_IN_BYTE; j++)
+        {
+            int remainder = number % 2;
+            array[j] = remainder;
+            number /= 2; // number = number / 2
+        }
 
-    printf("\n");
+        for (int x = 7; x >= 0; x--)
+        {
+            print_bulb(array[x]);
+        }
+
+        printf("\n");
+    }
 }
