@@ -7,60 +7,51 @@
 #include <string.h>
 #include <ctype.h>
 
-
 bool valid(string password);
 
 int main(void)
 {
     string password = get_string("Enter your password: ");
-
     if (valid(password))
     {
-        printf("Your password is valid!\n");;
+        printf("Your password is valid!\n");
     }
     else
     {
-        printf("Your password needs at least one uppercase letter, lowercase letter, number and symbol\n");;
+        printf("Your password needs at least one uppercase letter, lowercase letter, number and symbol\n");
     }
 }
 
 // TODO: Complete the Boolean function below
 bool valid(string password)
 {
-    bool isValid = false;
 
-    string check_type[4];
-    check_type[0] = "upper";
-    check_type[1] = "lower";
-    check_type[2] = "number";
-    check_type[3] = "special";
+    bool contain_upper = false;
+    bool contain_lower = false;
+    bool contain_number = false;
+    bool contain_symbol = false;
 
-    for (int j = 0; j < 4; j++)
+    for (int i = 0, N = strlen(password); i < N; i++)
     {
-        for (int i = 0, N = strlen(password); i < N; i++)
+        if (isupper(password[i]))
         {
-            if (strcmp(check_type[j], "upper") == 0 && password[i] == toupper(password[i]))
-            {
-                isValid = true;
-                break;
-            } else if (strcmp(check_type[j], "lower") == 0 && password[i] == tolower(password[i]))
-            {
-                isValid = true;
-                break;
-            } else if (strcmp(check_type[j], "number") == 0 && password[i] >= 0)
-            {
-                isValid = true;
-                break;
-            } else if (strcmp(check_type[j], "special") == 0 && (password[i] == '!' || password[i] == '$' || password[i] == '#'))
-            {
-                isValid = true;
-                break;
-            } else
-            {
-                isValid = false;
-            }
+            contain_upper = true;
+        }
+        else if (islower(password[i]))
+        {
+            contain_lower = true;
+        }
+        else if (isnumber(password[i]))
+        {
+            contain_number = true;
+        }
+        else if (password[i] == '$' || password[i] == '#' || password[i] == '!')
+        {
+            contain_symbol = true;
         }
     }
 
-    return isValid;
+    bool is_valid = contain_upper && contain_lower && contain_number && contain_symbol;
+
+    return is_valid;
 }
