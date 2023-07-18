@@ -27,7 +27,8 @@ int main(int argc, string argv[])
       printf("Key must only contain alphabetic characters.\n");
       return 1;
     }
-    else {
+    else
+    {
       for (int j = 0; j < key_length; j++)
       {
         if (i != j && tolower(key[j]) == tolower(key[i]))
