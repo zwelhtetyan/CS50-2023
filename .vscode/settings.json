@@ -2,5 +2,6 @@
   "files.associations": {
     "stdio.h": "c",
     "string.h": "c"
-  }
+  },
+  "editor.tabSize": 4
 }

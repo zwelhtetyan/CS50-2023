@@ -4,7 +4,8 @@
 int get_size(void);
 void print_grid(int size);
 
-int main(void) {
+int main(void)
+{
   // get size of grid
   int size = get_size();
 
@@ -12,19 +13,24 @@ int main(void) {
   print_grid(size);
 }
 
-int get_size(void) {
+int get_size(void)
+{
   int size;
 
-  do {
+  do
+  {
     size = get_int("Size: ");
   } while (size < 1);
 
   return size;
 }
 
-void print_grid(int size) {
-  for (int i = 0; i < size; i++) {
-    for (int j = 0; j < size; j++) printf("#");
+void print_grid(int size)
+{
+  for (int i = 0; i < size; i++)
+  {
+    for (int j = 0; j < size; j++)
+      printf("#");
 
     printf("\n");
   }
