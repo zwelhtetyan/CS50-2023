@@ -75,7 +75,8 @@ int main(int argc, char *argv[])
     int width = bi.biWidth;
 
     // Allocate memory for image
-    RGBTRIPLE(*image)[width] = calloc(height, width * sizeof(RGBTRIPLE));
+    RGBTRIPLE(*image)
+    [width] = calloc(height, width * sizeof(RGBTRIPLE));
     if (image == NULL)
     {
         printf("Not enough memory to store image.\n");
@@ -100,25 +101,25 @@ int main(int argc, char *argv[])
     // Filter image
     switch (filter)
     {
-        // Blur
-        case 'b':
-            blur(height, width, image);
-            break;
+    // Blur
+    case 'b':
+        blur(height, width, image);
+        break;
 
-        // Grayscale
-        case 'g':
-            grayscale(height, width, image);
-            break;
+    // Grayscale
+    case 'g':
+        grayscale(height, width, image);
+        break;
 
-        // Reflection
-        case 'r':
-            reflect(height, width, image);
-            break;
+    // Reflection
+    case 'r':
+        reflect(height, width, image);
+        break;
 
-        // Sepia
-        case 's':
-            sepia(height, width, image);
-            break;
+    // Sepia
+    case 's':
+        sepia(height, width, image);
+        break;
     }
 
     // Write outfile's BITMAPFILEHEADER
