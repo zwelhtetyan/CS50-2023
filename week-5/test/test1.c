@@ -1,27 +1,29 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct node
+typedef struct MyNode
 {
     int number;
-    struct node *next;
+    struct MyNode *next;
 } node;
 
 int main(int argc, char *argv[])
 {
-    node *list = NULL;
-
-    for (int i = 1; i < argc; i++)
+    if (argc < 2)
     {
-        int number = atoi(argv[i]);
-        node *n = malloc(sizeof(node));
-        if (n == NULL)
-        {
-            return 1;
-        }
+        printf("Usage: ./test1 number\n");
+        return 1;
+    }
 
-        n->number = number;
-        n->next = NULL; // => n->next is garbage initially
+    int limit = atoi(argv[1]);
+
+    node *list = NULL;
+    for (int i = 1; i <= limit; i++)
+    {
+        node *n = malloc(sizeof(node));
+
+        n->number = i;
+        n->next = NULL;
 
         n->next = list;
         list = n;
