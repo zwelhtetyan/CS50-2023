@@ -9,14 +9,16 @@ typedef struct my_node
     struct my_node *next;
 } node;
 
-// global variable
-node *root = NULL;
-
-// function declaration
+// function prototype
 node *create(int number);
 int init_nodes(int argc, char *argv[]);
 bool find(node *find_node, int number);
 node *insert(node *new_node, int value);
+bool destroy(void);
+void destroyer(node *current);
+
+// global variable
+node *root = NULL;
 
 int main(int argc, char *argv[])
 {
@@ -42,13 +44,20 @@ int main(int argc, char *argv[])
 
     insert(new_node, 11);
 
-    // printf("%s\n", exists ? "true" : "false");
+    // printf("%s\n", exists ? "Found number!" : "Number not found!");
 
-    // while (root != NULL)
+    // node *ptr = root;
+    // while (ptr != NULL)
     // {
-    //     printf("%i\n", root->number);
-    //     root = root->next;
+    //     printf("%i\n", ptr->number);
+    //     ptr = ptr->next;
     // }
+
+    if (!destroy())
+    {
+        printf("Problem freeing memory!\n");
+        return 1;
+    }
 
     return 0;
 }
@@ -99,6 +108,26 @@ bool find(node *find_node, int number)
         find(find_node->next, number); // recursion here
         return false;
     }
+}
+
+bool destroy(void)
+{
+    destroyer(root);
+
+    return true;
+}
+
+void destroyer(node *current)
+{
+
+    if (current == NULL)
+    {
+        return;
+    }
+
+    node *next = current->next;
+    free(current);
+    destroyer(next); // recursion here
 }
 
 int init_nodes(int argc, char *argv[])
