@@ -106,7 +106,6 @@ bool find(node *find_node, int number)
     else
     {
         find(find_node->next, number); // recursion here
-        return false;
     }
 }
 

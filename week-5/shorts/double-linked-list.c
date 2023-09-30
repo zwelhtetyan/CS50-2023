@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 // defining node
 typedef struct my_node
@@ -12,6 +13,9 @@ typedef struct my_node
 // function prototype
 int init_nodes(int argc, char *argv[]);
 node *create_next(node *new_node, int next_number);
+void printing_out(void);
+node *delete_node(int number);
+node *find_node(node *current, int number);
 
 // defining root globally
 node *root = NULL;
@@ -27,16 +31,18 @@ int main(int argc, char *argv[])
     // init double linked lists
     init_nodes(argc, argv);
 
-    node *ptr = root;
-    while (ptr != NULL)
-    {
-        printf("%i\n", ptr->number);
-        ptr = ptr->next;
-    }
+    // printing out
+    printing_out();
+
+    // deleting node
+    delete_node(5);
+
+    printing_out();
 }
 
 int init_nodes(int argc, char *argv[])
 {
+
     for (int i = 1; i < argc; i += 2)
     {
         int number = atoi(argv[i]);
@@ -53,6 +59,10 @@ int init_nodes(int argc, char *argv[])
         new_node->next = NULL;
 
         new_node->next = root;
+        if (i != 1)
+        {
+            root->prev = new_node;
+        }
         root = new_node;
 
         if ((i + 1) < argc)
@@ -86,4 +96,46 @@ node *create_next(node *new_node, int next_number)
     root = next_node;
 
     return next_node;
+}
+
+node *delete_node(int number)
+{
+    node *node_to_delete = find_node(root, number);
+
+    // printf("%i\n", node_to_delete->prev->number);
+    // printf("%i\n", node_to_delete->next->number);
+
+    node_to_delete->prev->next = node_to_delete->next;
+    node_to_delete->next->prev = node_to_delete->prev;
+
+    free(node_to_delete);
+}
+
+node *find_node(node *current, int number)
+{
+    node *tem = NULL;
+
+    if (current == NULL)
+    {
+        return tem;
+    }
+
+    if (current->number == number)
+    {
+        return current;
+    }
+    else
+    {
+        find_node(current->next, number);
+    }
+}
+
+void printing_out(void)
+{
+    node *ptr = root;
+    while (ptr != NULL)
+    {
+        printf("%i\n", ptr->number);
+        ptr = ptr->next;
+    }
 }
