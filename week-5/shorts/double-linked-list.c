@@ -1,3 +1,4 @@
+#include <cs50.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -16,6 +17,9 @@ node *create_next(node *new_node, int next_number);
 void printing_out(void);
 node *delete_node(int number);
 node *find_node(node *current, int number);
+bool destroy(void);
+void destroyer(node *current);
+bool is_valid_delete_number(int argc, char *argv[], int number);
 
 // defining root globally
 node *root = NULL;
@@ -28,16 +32,32 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    int number_to_delete;
+
+    do
+    {
+        number_to_delete = get_int("Enter number to Delete: ");
+    } while (!is_valid_delete_number(argc, argv, number_to_delete));
+
     // init double linked lists
-    init_nodes(argc, argv);
+    // init_nodes(argc, argv);
 
     // printing out
-    printing_out();
+    // printing_out();
 
     // deleting node
-    delete_node(5);
+    // delete_node(5);
 
-    printing_out();
+    // printing out again
+    // printing_out();
+
+    // if (!destroy())
+    // {
+    //     printf("Problem freeing memory!\n");
+    //     return 1;
+    // }
+
+    return 0;
 }
 
 int init_nodes(int argc, char *argv[])
@@ -138,4 +158,36 @@ void printing_out(void)
         printf("%i\n", ptr->number);
         ptr = ptr->next;
     }
+}
+
+bool is_valid_delete_number(int argc, char *argv[], int number)
+{
+    for (int i = 1; i < argc; i++)
+    {
+        if (argv[i] == number)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool destroy(void)
+{
+    destroyer(root);
+
+    return true;
+}
+
+void destroyer(node *current)
+{
+    if (current == NULL)
+    {
+        return;
+    }
+
+    destroyer(current->next);
+
+    free(current);
 }
