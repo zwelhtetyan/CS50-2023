@@ -15,11 +15,11 @@ typedef struct my_node
 int init_nodes(int argc, char *argv[]);
 node *create_next(node *new_node, int next_number);
 void printing_out(void);
-node *delete_node(int number);
-node *find_node(node *current, int number);
+void delete_node(int argc, int number);
+node *find_node(int argc, node *current, int number);
+bool is_valid_delete_number(int argc, char *argv[], int number);
 bool destroy(void);
 void destroyer(node *current);
-bool is_valid_delete_number(int argc, char *argv[], int number);
 
 // defining root globally
 node *root = NULL;
@@ -40,29 +40,28 @@ int main(int argc, char *argv[])
     } while (!is_valid_delete_number(argc, argv, number_to_delete));
 
     // init double linked lists
-    // init_nodes(argc, argv);
+    init_nodes(argc, argv);
 
     // printing out
-    // printing_out();
+    printing_out();
 
     // deleting node
-    // delete_node(5);
+    delete_node(argc, number_to_delete);
 
     // printing out again
-    // printing_out();
+    printing_out();
 
-    // if (!destroy())
-    // {
-    //     printf("Problem freeing memory!\n");
-    //     return 1;
-    // }
+    if (!destroy())
+    {
+        printf("Problem freeing memory!\n");
+        return 1;
+    }
 
     return 0;
 }
 
 int init_nodes(int argc, char *argv[])
 {
-
     for (int i = 1; i < argc; i += 2)
     {
         int number = atoi(argv[i]);
@@ -96,6 +95,8 @@ int init_nodes(int argc, char *argv[])
             }
         }
     }
+
+    return 0;
 }
 
 node *create_next(node *new_node, int next_number)
@@ -118,9 +119,9 @@ node *create_next(node *new_node, int next_number)
     return next_node;
 }
 
-node *delete_node(int number)
+void delete_node(int argc, int number)
 {
-    node *node_to_delete = find_node(root, number);
+    node *node_to_delete = find_node(argc, root, number);
 
     // printf("%i\n", node_to_delete->prev->number);
     // printf("%i\n", node_to_delete->next->number);
@@ -131,23 +132,28 @@ node *delete_node(int number)
     free(node_to_delete);
 }
 
-node *find_node(node *current, int number)
+node *find_node(int argc, node *current, int number)
 {
-    node *tem = NULL;
+    node *temp_null = NULL;
+    node *ptr = current;
 
-    if (current == NULL)
+    for (int i = 1; i < argc - 1; i++)
     {
-        return tem;
+        if (ptr == NULL)
+        {
+            return temp_null;
+        }
+        else if (ptr->number == number)
+        {
+            return ptr;
+        }
+        else
+        {
+            ptr = ptr->next;
+        }
     }
 
-    if (current->number == number)
-    {
-        return current;
-    }
-    else
-    {
-        find_node(current->next, number);
-    }
+    return temp_null;
 }
 
 void printing_out(void)
@@ -164,7 +170,7 @@ bool is_valid_delete_number(int argc, char *argv[], int number)
 {
     for (int i = 1; i < argc; i++)
     {
-        if (argv[i] == number)
+        if (atoi(argv[i]) == number)
         {
             return true;
         }
