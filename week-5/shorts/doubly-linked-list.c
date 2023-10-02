@@ -26,14 +26,15 @@ node *root = NULL;
 
 int main(int argc, char *argv[])
 {
+    // check base case
     if (argc < 2)
     {
         printf("Usage: ./double-linked-list 1 2 3 etc...");
         return 1;
     }
 
+    // get number to delete with prompt
     int number_to_delete;
-
     do
     {
         number_to_delete = get_int("Enter number to Delete: ");
@@ -51,6 +52,7 @@ int main(int argc, char *argv[])
     // printing out again
     printing_out();
 
+    // free nodes
     if (!destroy())
     {
         printf("Problem freeing memory!\n");
@@ -126,10 +128,25 @@ void delete_node(int argc, int number)
     // printf("%i\n", node_to_delete->prev->number);
     // printf("%i\n", node_to_delete->next->number);
 
-    node_to_delete->prev->next = node_to_delete->next;
-    node_to_delete->next->prev = node_to_delete->prev;
+    if (node_to_delete != NULL)
+    {
+        if (node_to_delete->prev != NULL && node_to_delete->next != NULL)
+        {
+            node_to_delete->prev->next = node_to_delete->next;
+            node_to_delete->next->prev = node_to_delete->prev;
+        }
+        else if (node_to_delete->prev == NULL)
+        {
+            node_to_delete->next->prev = node_to_delete->prev;
+            root = node_to_delete->next;
+        }
+        else if (node_to_delete->next == NULL)
+        {
+            node_to_delete->prev->next = node_to_delete->next;
+        }
 
-    free(node_to_delete);
+        free(node_to_delete);
+    }
 }
 
 node *find_node(int argc, node *current, int number)
@@ -137,7 +154,7 @@ node *find_node(int argc, node *current, int number)
     node *temp_null = NULL;
     node *ptr = current;
 
-    for (int i = 1; i < argc - 1; i++)
+    for (int i = 1; i < 4; i++)
     {
         if (ptr == NULL)
         {
