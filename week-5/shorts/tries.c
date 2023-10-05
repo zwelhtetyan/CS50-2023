@@ -11,12 +11,15 @@ typedef struct _tries
     struct _tries *year[NUM_OF_YEAR];
 } tries;
 
-tries *root;
 int prompt_number = 3;
+
+tries *root = NULL;
 
 // function prototype
 void set_null(tries *current);
 char *valid_university(tries *current, char *year);
+void destroyer(tries *current);
+bool destroy();
 
 int main(void)
 {
@@ -71,6 +74,12 @@ int main(void)
         prompt_number--;
     }
 
+    if (!destroy())
+    {
+        printf("Problem freeing memory!\n");
+        return 1;
+    }
+
     return 0;
 }
 
@@ -85,7 +94,7 @@ void set_null(tries *current)
 
 char *valid_university(tries *current, char *year)
 {
-    tries *temp = current;
+    tries *temp = root;
 
     for (int i = 0, N = strlen(year); i < N; i++)
     {
@@ -98,4 +107,24 @@ char *valid_university(tries *current, char *year)
     }
 
     return temp->university;
+}
+
+bool destroy()
+{
+    destroyer(root);
+
+    return true;
+}
+
+void destroyer(tries *current)
+{
+    for (int i = 0; i < NUM_OF_YEAR; i++)
+    {
+        if (current->year[i] != NULL)
+        {
+            destroyer(current->year[i]);
+        }
+    }
+
+    free(current);
 }
