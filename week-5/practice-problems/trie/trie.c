@@ -69,6 +69,7 @@ int main(int argc, char *argv[])
             int index = tolower(name[i]) - 'a';
             if (cursor->children[index] == NULL)
             {
+
                 // Make node
                 node *new = malloc(sizeof(node));
                 new->is_word = false;
@@ -112,10 +113,14 @@ bool check(char *word)
 
     for (int i = 0, N = strlen(word); i < N; i++)
     {
-        int index = tolower(word[i]) - 'a';
-        if (cursor->children[index] == NULL)
+        int idx = tolower(word[i]) - 'a';
+
+        if (cursor->children[idx] == NULL)
+        {
             return false;
-        cursor = cursor->children[index];
+        }
+
+        cursor = cursor->children[idx];
     }
 
     return cursor->is_word;

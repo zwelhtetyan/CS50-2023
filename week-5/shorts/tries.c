@@ -17,7 +17,7 @@ tries *root = NULL;
 
 // function prototype
 void set_null(tries *current);
-char *valid_university(tries *current, char *year);
+char *valid_university(char *year);
 void destroyer(tries *current);
 bool destroy();
 
@@ -68,7 +68,7 @@ int main(void)
     {
         char *year = get_string("Year: ");
 
-        char *university_result = valid_university(root, year);
+        char *university_result = valid_university(year);
         printf("%s\n", university_result);
 
         prompt_number--;
@@ -92,7 +92,7 @@ void set_null(tries *current)
     }
 }
 
-char *valid_university(tries *current, char *year)
+char *valid_university(char *year)
 {
     tries *temp = root;
 
