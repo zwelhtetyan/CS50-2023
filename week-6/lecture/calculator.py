@@ -4,7 +4,7 @@ def calc():
 
     z = x / y
 
-    print(f"{z:.50f}")
+    print(f"{z: .30f}")
 
 
 calc()

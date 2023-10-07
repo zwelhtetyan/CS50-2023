@@ -1,4 +1,4 @@
-# Pseudocode
+# Just pseudocode
 
 
 words = set()
