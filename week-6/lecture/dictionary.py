@@ -16,7 +16,7 @@ def load(dictionary):
     for line in file:
         word = line.rstrip()
         words.add(word)
-    # close(file)
+        file.close()
         return True
 
 
