@@ -1,0 +1,77 @@
+on: push
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build packages for linux/arm64 platform
+        run: |
+
+          # Enable an execution of different multi-architecture containers by QEMU
+          sudo apt-get update -y
+          sudo apt-get install -y qemu qemu-user-static
+          docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+
+          # Build packages on aarch64 architecture
+          docker run \
+            -e DEBIAN_FRONTEND=noninteractive \
+            --rm \
+            --tty \
+            --volume "${PWD}/artifacts:/artifacts" \
+            --volume "${GITHUB_WORKSPACE}:${GITHUB_WORKSPACE}" \
+            --workdir "${GITHUB_WORKSPACE}" \
+            arm64v8/ubuntu:22.04 \
+            /bin/bash -c \
+            "apt-get update && \
+            apt-get -qq install -y build-essential gem rpm ruby-full && \
+            gem install fpm package_cloud && \
+            make deb && \
+            make rpm && \
+            cp build/deb/*.deb /artifacts && \
+            cp build/rpm/*.rpm /artifacts && \
+            rm -rf build"
+
+      - name: Build packages for linux/amd64 platform
+        run: |
+          sudo apt-get install -y rpm
+          sudo gem install fpm package_cloud
+          make deb
+          make rpm
+          sudo cp build/deb/*.deb ${PWD}/artifacts
+          sudo cp build/rpm/*.rpm ${PWD}/artifacts
+
+      - name: Deploy
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          PACKAGECLOUD_REPO="cs50/repo"
+
+          # Deploy deb to ubuntu repos
+          UBUNTU_REPOS=( xenial yakkety zesty artful bionic cosmic disco eoan focal groovy hirsute impish jammy kinetic lunar )
+          for repo in "${UBUNTU_REPOS[@]}"; do
+            package_cloud push "$PACKAGECLOUD_REPO"/ubuntu/"$repo" ${PWD}/artifacts/*.deb
+          done
+
+          # Deploy rpm to fedora repos
+          for repo in $(seq 28 38); do
+            package_cloud push "$PACKAGECLOUD_REPO"/fedora/"$repo" ${PWD}/artifacts/*.rpm
+          done
+        env:
+          PACKAGECLOUD_TOKEN: ${{ secrets.PACKAGECLOUD_TOKEN }}
+
+      - name: Extract version from Makefile
+        id: make_version
+        run: |
+          echo ::set-output name=version::$(make version)
+
+      - name: Create Release
+        if: ${{ github.ref == 'refs/heads/main' }}
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ github.token }}
+          script: |
+            github.rest.repos.createRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: "v${{ steps.make_version.outputs.version }}",
+              tag_commitish: "${{ github.sha }}"
+            })
