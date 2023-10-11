@@ -42,7 +42,7 @@ char *get_card_type(long card_numbers)
 {
   int count = get_length(card_numbers);
 
-  if (count == 13 && count == 15 && count == 16)
+  if (count != 13 && count != 15 && count != 16)
   {
     return "INVALID";
   }
