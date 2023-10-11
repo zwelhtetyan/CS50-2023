@@ -25,20 +25,14 @@ def get_card_numbers():
 def get_card_type(card_numbers):
     l = len(card_numbers)
 
-    if l != 13 and l != 15 and l != 16:
-        return "INVALID"
-
-    first_one = int(card_numbers[:1])
-    first_two = int(card_numbers[:2])
-
-    if l == 15 and (first_two == 34 or first_two == 37):
-        return "AMEX"
-    elif l == 16 and first_two >= 51 and first_two <= 55:
-        return "MASTERCARD"
-    elif (l == 13 or l == 16) and first_one == 4:
-        return "VISA"
+    if l == 15 and (card_numbers.startswith('34') or card_numbers.startswith('37')):
+        print("AMEX")
+    elif l == 16 and card_numbers.startswith(('51', '52', '53', '54', '55')):
+        print("MASTERCARD")
+    elif (l == 13 or l == 16) and card_numbers.startswith('4'):
+        print("VISA")
     else:
-        return "INVALID"
+        print("INVALID")
 
 
 def is_legit(card_numbers):
@@ -50,10 +44,7 @@ def is_legit(card_numbers):
         r = n * 2
 
         if r >= 10:
-            f = int(str(r)[:1])
-            s = int(str(r)[1:2])
-
-            first_sum += (f + s)
+            first_sum += ((r // 10) + (r % 10))
         else:
             first_sum += r
 
