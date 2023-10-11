@@ -1,5 +1,5 @@
-#include <stdio.h>
 #include <cs50.h>
+#include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
 #include <stdlib.h>
@@ -16,7 +16,7 @@ int main(void)
 
   if (strcmp(card_type, "INVALID") == 0 || (!is_legit(card_numbers)))
   {
-    printf("%s\n", card_type);
+    printf("INVALID\n");
     return 0;
   }
 
@@ -85,11 +85,50 @@ bool is_legit(long card_numbers)
   snprintf(card_numbers_str, sizeof(card_numbers_str), "%ld", card_numbers);
 
   int first_sum = 0;
-  int total = 0;
+  int second_sum = 0;
 
-  for (int i = count; i >= 0; i -= 2)
+  // first sum
+  for (int i = count; i > 0; i -= 2)
   {
+    int num = ((int)card_numbers_str[i - 2]) - 48;
+    int r = num * 2;
+
+    if (r >= 10)
+    {
+      int first = r / 10;
+      int second = r % 10;
+
+      first_sum += (first + second);
+    }
+    else
+    {
+      first_sum += r;
+    }
+
+    // check for invalid-index
+    if (i - 4 < 0)
+    {
+      break;
+    }
   }
 
-  return true;
+  // second sum
+  for (int i = count; i > 0; i -= 2)
+  {
+    int num = ((int)card_numbers_str[i - 1]) - 48;
+
+    second_sum += num;
+
+    // check for invalid-index
+    if (i - 3 < 0)
+    {
+      break;
+    }
+  }
+
+  int total = first_sum + second_sum;
+
+  // printf("%i\n", total);
+
+  return total % 10 == 0;
 }
