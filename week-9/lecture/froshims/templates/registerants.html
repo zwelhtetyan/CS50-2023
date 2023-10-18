@@ -1,0 +1,9 @@
+{% extends "layout.html" %} {% block body %}
+
+<ul>
+  {% for registerant in registerants %}
+  <li>{{registerant}} is registered for {{registerants[registerant]}}</li>
+  {% endfor %}
+</ul>
+
+{% endblock %}
