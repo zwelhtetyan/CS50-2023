@@ -29,7 +29,7 @@ def login_required(f):
     """
     Decorate routes to require login.
 
-    http://flask.pocoo.org/docs/0.12/patterns/viewdecorators/
+    https://flask.palletsprojects.com/en/3.0.x/patterns/viewdecorators/
     """
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -57,11 +57,13 @@ def lookup(symbol):
 
     # Query API
     try:
-        response = requests.get(url, cookies={"session": str(uuid.uuid4())}, headers={"User-Agent": "python-requests", "Accept": "*/*"})
+        response = requests.get(url, cookies={"session": str(uuid.uuid4())}, headers={
+                                "User-Agent": "python-requests", "Accept": "*/*"})
         response.raise_for_status()
 
         # CSV header: Date,Open,High,Low,Close,Adj Close,Volume
-        quotes = list(csv.DictReader(response.content.decode("utf-8").splitlines()))
+        quotes = list(csv.DictReader(
+            response.content.decode("utf-8").splitlines()))
         quotes.reverse()
         price = round(float(quotes[0]["Adj Close"]), 2)
         return {
