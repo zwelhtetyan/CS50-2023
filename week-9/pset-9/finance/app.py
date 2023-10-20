@@ -42,7 +42,42 @@ def index():
 @login_required
 def buy():
     """Buy shares of stock"""
-    return apology("TODO")
+    if request.method == "POST":
+        symbol = request.form.get("symbol").strip()
+        share = request.form.get("share").strip()
+
+        if not symbol:
+            return apology("must provide symbol", 401)
+
+        if not share:
+            return apology("must provide share", 401)
+
+        if not share.isnumeric() or int(share) < 1:
+            return apology("share must be positive integer")
+
+        symbol = lookup(symbol)
+
+        if symbol is None:
+            return apology("Invalid symbol", 403)
+
+        row_cash = db.execute(
+            "SELECT cash FROM users WHERE id = ?", session.get("user_id"))
+
+        if not len(row_cash):
+            return apology("Invalid user", 403)
+
+        total_costs = int(symbol["price"]) * int(share)
+        current_cash = int(row_cash[0]["cash"])
+
+        if current_cash < total_costs:
+            return apology("can't afford", 403)
+
+        # insert table -> todo
+
+        return redirect("/")
+
+    else:
+        return render_template("buy.html")
 
 
 @app.route("/history")
@@ -83,6 +118,9 @@ def login():
         # Remember which user has logged in
         session["user_id"] = rows[0]["id"]
 
+        # flash messing
+        flash(f"Successfully login as {rows[0]['username']}")
+
         # Redirect user to home page
         return redirect("/")
 
@@ -106,7 +144,21 @@ def logout():
 @login_required
 def quote():
     """Get stock quote."""
-    return apology("TODO")
+    if request.method == "POST":
+        symbol = request.form.get("symbol").strip()
+
+        if not symbol:
+            return apology("must provide symbol", 401)
+
+        quote = lookup(symbol)
+
+        if quote is None:
+            return apology("Invalid symbol", 403)
+
+        return render_template("quoted.html", name=quote["name"], price=usd(quote["price"]), symbol=quote["symbol"])
+
+    else:
+        return render_template("quote.html")
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -150,10 +202,13 @@ def register():
             "INSERT INTO users (username, hash) VALUES(?, ?)", username, hash)
 
         # get his/her id
-        rows_id = db.execute(
-            "SELECT id FROM users WHERE username = ?", username)
+        row_user = db.execute(
+            "SELECT id, username FROM users WHERE username = ?", username)
 
-        session["user_id"] = rows_id[0]["id"]
+        session["user_id"] = row_user[0]["id"]
+
+        # flash messing
+        flash(f"Successfully registered as {row_user[0]['username']}")
 
         # Redirect user to home page
         return redirect("/")
