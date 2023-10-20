@@ -1,0 +1,37 @@
+{% extends "layout.html" %} {% block title %} Log In {% endblock %} {% block
+main %}
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">Symbol</th>
+      <th scope="col">Name</th>
+      <th scope="col">Share</th>
+      <th scope="col" class="text-end">Price</th>
+      <th scope="col" class="text-end">Total</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for stock in stocks %}
+    <tr>
+      <td class="text-uppercase">{{stock.stock_symbol}}</td>
+      <td class="text-uppercase">{{stock.stock_name}}</td>
+      <td>{{stock.net_stock_share}}</td>
+      <td class="text-end">{{stock.stock_price}}</td>
+      <td class="text-end">
+        {{'%.2f'|format(stock.stock_price * stock.net_stock_share)}}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+  <tfoot>
+    <tr>
+      <td class="border-0 fw-bold text-end" colspan="4">Cash</td>
+      <td class="border-0 text-end">{{total_price}}</td>
+    </tr>
+    <tr>
+      <td class="border-0 fw-bold text-end" colspan="4">TOTAL</td>
+      <td class="border-0 w-bold text-end">$10,000.00</td>
+    </tr>
+  </tfoot>
+</table>
+{% endblock %}

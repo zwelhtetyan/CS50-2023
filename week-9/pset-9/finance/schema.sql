@@ -13,12 +13,13 @@ CREATE UNIQUE INDEX username
 ON users (username);
 
 CREATE TABLE histories (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-  user_id INTEGER,
-  stock_name TEXT,
-  stock_symbol TEXT,
-  stock_share INTEGER,
-  stock_price REAL,
-  type TEXT CHECK (type IN ('buy', 'sell'))
+  id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+  timestamp DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  user_id INTEGER NOT NULL,
+  stock_name TEXT NOT NULL,
+  stock_symbol TEXT NOT NULL,
+  stock_share INTEGER NOT NULL,
+  stock_price REAL NOT NULL,
+  type TEXT CHECK (type IN ('buy', 'sell')) NOT NULL
 );
+

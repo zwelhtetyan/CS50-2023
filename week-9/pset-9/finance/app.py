@@ -35,7 +35,15 @@ def after_request(response):
 @login_required
 def index():
     """Show portfolio of stocks"""
-    return apology("TODO")
+    current_user_id = session.get("user_id")
+    row_stocks = db.execute("SELECT stock_name, stock_symbol, SUM(CASE WHEN type = 'buy' THEN stock_share ELSE 0 END) - SUM(CASE WHEN type = 'sell' THEN stock_share ELSE 0 END) AS net_stock_share, stock_price FROM histories WHERE user_id = ? GROUP BY stock_name, stock_symbol HAVING net_stock_share != 0 ORDER BY timestamp DESC", current_user_id)
+
+    total_price = 0
+    for row in row_stocks:
+        total_stock_price = row["stock_price"] * row["net_stock_share"]
+        total_price += total_stock_price
+
+    return render_template("index.html", stocks=row_stocks, total_price=usd(total_price))
 
 
 @app.route("/buy", methods=["GET", "POST"])
@@ -55,24 +63,32 @@ def buy():
         if not share.isnumeric() or int(share) < 1:
             return apology("share must be positive integer")
 
-        symbol = lookup(symbol)
+        stock = lookup(symbol)
 
-        if symbol is None:
+        if stock is None:
             return apology("Invalid symbol", 403)
 
+        current_user_id = session.get("user_id")
+
         row_cash = db.execute(
-            "SELECT cash FROM users WHERE id = ?", session.get("user_id"))
+            "SELECT cash FROM users WHERE id = ?", current_user_id)
 
         if not len(row_cash):
             return apology("Invalid user", 403)
 
-        total_costs = int(symbol["price"]) * int(share)
-        current_cash = int(row_cash[0]["cash"])
+        total_costs = float(stock["price"]) * int(share)
+        current_cash = float(row_cash[0]["cash"])
 
         if current_cash < total_costs:
             return apology("can't afford", 403)
 
-        # insert table -> todo
+        db.execute(
+            "INSERT INTO histories (user_id, stock_name, stock_symbol, stock_share, stock_price, type) VALUES(?,?,?,?,?,?)", current_user_id, symbol, symbol, share, stock["price"], 'buy')
+
+        db.execute("UPDATE users set cash = ?", current_cash - total_costs)
+
+        # flash messing
+        flash(f"Successfully bought {symbol.upper()}({share})")
 
         return redirect("/")
 
@@ -222,4 +238,59 @@ def register():
 @login_required
 def sell():
     """Sell shares of stock"""
-    return apology("TODO")
+    if request.method == "POST":
+        symbol = request.form.get("symbol").strip()
+        share = request.form.get("share").strip()
+
+        if not symbol:
+            return apology("must provide symbol", 401)
+
+        if not share:
+            return apology("must provide share", 401)
+
+        if not share.isnumeric() or int(share) < 1:
+            return apology("share must be positive integer")
+
+        # row_stock_names = db.execute("SELECT DISTINCT stock_name FROM histories")
+        current_user_id = session.get("user_id")
+        row_stocks = db.execute("SELECT stock_symbol, SUM(CASE WHEN type = 'buy' THEN stock_share ELSE 0 END) - SUM(CASE WHEN type = 'sell' THEN stock_share ELSE 0 END) AS net_stock_share, stock_price FROM histories WHERE user_id = ? GROUP BY stock_name, stock_symbol HAVING net_stock_share != 0", current_user_id)
+
+        valid_symbol_of_user = False
+        current_stock = {}
+
+        for stock in row_stocks:
+            if stock["stock_symbol"].lower() == symbol.lower():
+                valid_symbol_of_user = True
+                current_stock = stock
+                break
+
+        if not valid_symbol_of_user:
+            return apology(f"symbol ({symbol}) not found!", 403)
+
+        if int(share) > current_stock["net_stock_share"]:
+            return apology("too many shares", 403)
+
+        db.execute(
+            "INSERT INTO histories (user_id, stock_name, stock_symbol, stock_share, stock_price, type) VALUES(?,?,?,?,?,?)", current_user_id, symbol, symbol, share, current_stock["stock_price"], 'sell')
+
+        row_cash = db.execute(
+            "SELECT cash FROM users WHERE id = ?", current_user_id)
+
+        if not len(row_cash):
+            return apology("Invalid user", 403)
+
+        current_cash = float(row_cash[0]["cash"])
+        total_costs = float(current_stock["stock_price"]) * int(share)
+
+        db.execute("UPDATE users set cash = ?", current_cash + total_costs)
+
+        # flash messing
+        flash(f"Successfully sold {symbol.upper()}({share})")
+
+        return redirect("/")
+
+    else:
+        current_user_id = session.get("user_id")
+        row_stock_names = db.execute(
+            "SELECT stock_symbol, SUM(CASE WHEN type = 'buy' THEN stock_share ELSE 0 END) - SUM(CASE WHEN type = 'sell' THEN stock_share ELSE 0 END) AS net_stock_share FROM histories WHERE user_id = ? GROUP BY stock_name, stock_symbol HAVING net_stock_share != 0", current_user_id)
+        return render_template("sell.html", stock_names=row_stock_names)

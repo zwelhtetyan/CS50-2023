@@ -1,0 +1,28 @@
+{% extends "layout.html" %} {% block title %} Log In {% endblock %} {% block
+main %}
+<form action="/sell" method="post">
+  <select
+    class="form-select mx-auto w-auto mb-3"
+    name="symbol"
+    aria-label="share_select"
+  >
+    <option selected disabled>Symbol</option>
+    {% for s in stock_names %}
+    <option value="{{s.stock_symbol}}">{{s.stock_symbol.upper()}}</option>
+    {% endfor %}
+  </select>
+
+  <div class="mb-3">
+    <input
+      autocomplete="off"
+      class="form-control mx-auto w-auto"
+      id="share"
+      name="share"
+      placeholder="Share"
+      type="number"
+      min="1"
+    />
+  </div>
+  <button class="btn btn-primary" type="submit">Sell</button>
+</form>
+{% endblock %}
