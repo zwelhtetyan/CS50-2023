@@ -16,7 +16,7 @@ main %}
       <td class="text-uppercase">{{stock.stock_symbol}}</td>
       <td class="text-uppercase">{{stock.stock_name}}</td>
       <td>{{stock.net_stock_share}}</td>
-      <td class="text-end">{{stock.stock_price}}</td>
+      <td class="text-end">${{stock.stock_price}}</td>
       <td class="text-end">
         {{'%.2f'|format(stock.stock_price * stock.net_stock_share)}}
       </td>
@@ -26,7 +26,7 @@ main %}
   <tfoot>
     <tr>
       <td class="border-0 fw-bold text-end" colspan="4">Cash</td>
-      <td class="border-0 text-end">{{total_price}}</td>
+      <td class="border-0 text-end">{{current_cash}}</td>
     </tr>
     <tr>
       <td class="border-0 fw-bold text-end" colspan="4">TOTAL</td>

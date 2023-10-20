@@ -1,0 +1,25 @@
+{% extends "layout.html" %} {% block title %} Log In {% endblock %} {% block
+main %}
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">Symbol</th>
+      <th scope="col" class="text-end">Share</th>
+      <th scope="col" class="text-end">Price</th>
+      <th scope="col" class="text-end">Transacted</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for history in histories %}
+    <tr>
+      <td class="text-uppercase">{{history.stock_symbol}}</td>
+      <td class="text-end">
+        {{ "-" if history.type == 'sell' else "" }}{{history.stock_share}}
+      </td>
+      <td class="text-end">${{history.stock_price}}</td>
+      <td class="text-end">{{history.timestamp}}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
