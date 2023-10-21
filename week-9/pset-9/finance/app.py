@@ -5,7 +5,7 @@ from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from helpers import apology, login_required, lookup, usd
+from helpers import apology, login_required, lookup, is_valid_password, usd
 
 # Configure application
 app = Flask(__name__)
@@ -43,11 +43,10 @@ def index():
     #     total_stock_price = float(row["stock_price"]) * int(row["net_stock_share"])
     #     total_price += total_stock_price
 
-    row_cash = db.execute(
-            "SELECT cash FROM users WHERE id = ?", current_user_id)
+    row_cash = db.execute("SELECT cash FROM users WHERE id = ?", current_user_id)
 
     if not len(row_cash):
-            return apology("Invalid user", 400)
+        return apology("Invalid user", 400)
 
     current_cash = float(row_cash[0]["cash"])
 
@@ -110,7 +109,8 @@ def history():
     """Show history of transactions"""
 
     current_user_id = session.get("user_id")
-    rows_histories = db.execute("SELECT stock_symbol, stock_share, stock_price, timestamp, type FROM histories WHERE user_id = ? ORDER BY timestamp", current_user_id)
+    rows_histories = db.execute(
+        "SELECT stock_symbol, stock_share, stock_price, timestamp, type FROM histories WHERE user_id = ? ORDER BY timestamp", current_user_id)
     return render_template("history.html", histories=rows_histories)
 
 
@@ -134,6 +134,12 @@ def login():
         # Ensure password was submitted
         elif not password:
             return apology("must provide password", 400)
+
+        elif len(password) < 6:
+            return apology("password must be at least 6 characters", 400)
+
+        if not is_valid_password(password):
+            return apology("password must contains at least one letter, one number, and one symbol", 400)
 
         # Query database for username
         rows = db.execute("SELECT * FROM users WHERE username = ?", username)
@@ -209,6 +215,12 @@ def register():
         # Ensure password was submitted
         elif not password or not confirmation:
             return apology("must provide both password and confirmation", 400)
+
+        elif len(password) < 6:
+            return apology("password must be at least 6 characters", 400)
+
+        if not is_valid_password(password):
+            return apology("password must contains at least one letter, one number, and one symbol", 400)
 
         elif password != confirmation:
             return apology("passwords do not match", 400)
@@ -302,5 +314,6 @@ def sell():
 
     else:
         current_user_id = session.get("user_id")
-        row_stock_names = db.execute("SELECT stock_symbol, SUM(CASE WHEN type = 'buy' THEN stock_share ELSE 0 END) - SUM(CASE WHEN type = 'sell' THEN stock_share ELSE 0 END) AS net_stock_share FROM histories WHERE user_id = ? GROUP BY stock_name, stock_symbol HAVING net_stock_share != 0", current_user_id)
+        row_stock_names = db.execute(
+            "SELECT stock_symbol, SUM(CASE WHEN type = 'buy' THEN stock_share ELSE 0 END) - SUM(CASE WHEN type = 'sell' THEN stock_share ELSE 0 END) AS net_stock_share FROM histories WHERE user_id = ? GROUP BY stock_name, stock_symbol HAVING net_stock_share != 0", current_user_id)
         return render_template("sell.html", stock_names=row_stock_names)

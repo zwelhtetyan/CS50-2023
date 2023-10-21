@@ -5,6 +5,7 @@ import requests
 import subprocess
 import urllib
 import uuid
+import re
 
 from flask import redirect, render_template, session
 from functools import wraps
@@ -76,3 +77,13 @@ def lookup(symbol):
 def usd(value):
     """Format value as USD."""
     return f"${value:,.2f}"
+
+
+def is_valid_password(password):
+    # Check if the password contains at least one letter, one number, and one symbol
+    if (re.search(r'[a-zA-Z]', password) and
+        re.search(r'\d', password) and
+        re.search(r'[!@#$%^&*()_+{}[\]:;<>,.?~\\/-]', password)):
+        return True
+    else:
+        return False
